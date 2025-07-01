@@ -1,162 +1,154 @@
 # Personalized Dashboard
+[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/Venu005/personalize)
 
-A modern, responsive dashboard that aggregates content from multiple sources including news, movies, and social media.
+A modern, responsive dashboard that aggregates and personalizes content from multiple sources, including news, movies, and social media, built with Next.js and Redux Toolkit.
 
-## Features
+## Key Features
 
-- **Real-time News**: Powered by NewsAPI
-- **Movie Database**: Integrated with TMDB (The Movie Database)
-- **Social Feed**: Mock social media content
-- **Personalized Feed**: Customizable content based on user preferences
-- **Favorites System**: Save and organize your favorite content
-- **Trending Content**: Discover what's popular across all categories
-- **Search Functionality**: Search across all content types
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Dark/Light Theme**: Toggle between themes
-- **Drag & Drop**: Reorder your personalized feed
+-   **Multi-Source Content**: Aggregates real-time news from **NewsAPI**, movie data from **TMDB**, and a mock social media feed.
+-   **Personalized Feed**: A customizable home feed that mixes content based on user preferences.
+-   **Drag & Drop Interface**: Easily reorder items in your personalized feed using `@dnd-kit`.
+-   **User Authentication**: Secure login and registration system powered by NextAuth.js, with credentials and Google providers.
+-   **Database Integration**: Uses Prisma and PostgreSQL to persist user data, preferences, and sessions.
+-   **Favorites System**: Save and manage your favorite content across all categories.
+-   **Comprehensive Search**: A global search feature to find content across news, movies, and social posts.
+-   **Dynamic Theming**: Switch between light and dark modes.
+-   **Internationalization (i18n)**: Supports multiple languages including English, Hindi, Portuguese, and more.
+-   **Responsive Design**: A fully responsive layout for seamless use on desktop, tablet, and mobile devices.
 
-## Setup
+## Getting Started
 
-### 1. Clone the repository
+### Prerequisites
+
+-   Node.js (LTS version recommended)
+-   npm or yarn
+-   PostgreSQL database
+
+### 1. Clone the Repository
+
 ```bash
-git clone <repository-url>
-cd personalized-dashboard
+git clone https://github.com/venu005/personalize.git
+cd personalize
 ```
 
-### 2. Install dependencies
+### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
-### 3. Get API Keys (REQUIRED)
+### 3. Set Up Environment Variables
 
-⚠️ **Important**: This application requires valid API keys to function properly. The example keys in `.env.local` will not work and must be replaced.
+Create a `.env.local` file in the root of the project and add the following environment variables.
 
-#### NewsAPI
-1. Go to [NewsAPI.org](https://newsapi.org/)
-2. Sign up for a free account (no credit card required)
-3. Verify your email address
-4. Go to your dashboard and copy your API key
-5. **Free tier limitations**: 100 requests per day, developer use only
-
-#### TMDB API
-1. Go to [TMDB](https://www.themoviedb.org/)
-2. Create an account and verify your email
-3. Go to Settings > API in your account
-4. Click "Request an API Key"
-5. Choose "Developer" option
-6. Fill out the application form:
-   - Application Name: "Personal Dashboard" (or any name)
-   - Application URL: "http://localhost:3000" (for development)
-   - Application Summary: "Personal content dashboard for learning/development"
-7. Accept the terms and submit
-8. Copy your API key (v3 auth)
-
-### 4. Environment Variables
-
-**CRITICAL**: Replace the example API keys in `.env.local` with your actual keys:
-
-```env
-# Replace these with your actual API keys
-NEWSAPI_KEY=your_actual_newsapi_key_from_newsapi_org
-TMDB_API_KEY=your_actual_tmdb_api_key_from_themoviedb_org
-
-# These URLs are correct and don't need to be changed
-NEWSAPI_BASE_URL=https://newsapi.org/v2
-TMDB_BASE_URL=https://api.themoviedb.org/3
+#### Database URL
+You need a running PostgreSQL instance. Your connection string will look something like this:
+```
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 ```
 
-### 5. Run the development server
+#### API Keys
+This application requires API keys from NewsAPI and The Movie Database (TMDB) to fetch content.
+
+-   **NewsAPI**:
+    1.  Go to [newsapi.org](https://newsapi.org/) and sign up for a free developer account.
+    2.  Copy your API key from your account dashboard.
+-   **TMDB API**:
+    1.  Go to [themoviedb.org](https://www.themoviedb.org/) and create an account.
+    2.  Navigate to `Settings > API` and request a developer API key (v3 auth).
+
+Your final `.env.local` file should look like this:
+
+```env
+# --- Database ---
+# Replace with your PostgreSQL connection string
+DATABASE_URL="postgresql://postgres:password@localhost:5432/mydb"
+
+# --- API Keys ---
+# Replace with your actual keys
+NEWSAPI_KEY="YOUR_NEWSAPI_KEY"
+TMDB_API_KEY="YOUR_TMDB_API_KEY"
+
+# --- NextAuth ---
+# Generate a secret key using: openssl rand -base64 32
+NEXTAUTH_SECRET="YOUR_NEXTAUTH_SECRET"
+NEXTAUTH_URL="http://localhost:3000"
+
+# --- Google OAuth (Optional) ---
+# GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
+# GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
+```
+
+### 4. Set Up the Database
+
+Apply the database schema and seed it with initial user data.
+
+```bash
+# Apply migrations
+npx prisma migrate dev
+
+# Seed the database
+npx prisma db seed
+```
+This will create two sample users:
+-   `user1@example.com` (password: `password1`)
+-   `user2@example.com` (password: `password2`)
+
+
+### 5. Run the Development Server
+
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Troubleshooting
-
-### API Key Errors
-If you see 401 errors in the console:
-1. Double-check that your API keys are correctly copied (no extra spaces or characters)
-2. Verify your NewsAPI account is verified via email
-3. Ensure your TMDB API key request was approved
-4. Restart the development server after updating `.env.local`
-
-### Rate Limiting
-- **NewsAPI Free Tier**: 100 requests/day
-- **TMDB**: 1,000 requests per day
-- If you hit limits, the app will show cached content or error messages
-
-### Development Environment Issues
-If you encounter runtime errors or connection issues:
-1. Ensure you have a stable internet connection
-2. Use Node.js LTS version (18.x or 20.x recommended)
-3. Clear browser cache and restart the dev server
-4. Check that no firewall is blocking API requests
-
-## API Endpoints
-
-### News API (`/api/news`)
-- **GET** `/api/news` - Get latest news
-- **Query Parameters**:
-  - `category` - News category (business, entertainment, general, health, science, sports, technology)
-  - `q` - Search query
-  - `country` - Country code (default: 'us')
-  - `pageSize` - Number of articles (default: 20)
-
-### Movies API (`/api/movies`)
-- **GET** `/api/movies` - Get movies
-- **Query Parameters**:
-  - `genre` - Movie genre (action, comedy, drama, horror, sci-fi, etc.)
-  - `q` - Search query
-  - `page` - Page number (default: 1)
-
-### Search API (`/api/search`)
-- **GET** `/api/search` - Search across all content
-- **Query Parameters**:
-  - `q` - Search query (required)
-  - `type` - Content type filter (news, movie, social, or all)
+Open [http://localhost:3000](http://localhost:3000) in your browser. You can log in with one of the seeded users to see the personalized features.
 
 ## Tech Stack
 
-- **Framework**: Next.js 13 with App Router
-- **Styling**: Tailwind CSS + shadcn/ui
-- **State Management**: Redux Toolkit + RTK Query
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
-- **Date Handling**: date-fns
-- **Drag & Drop**: react-beautiful-dnd
+-   **Framework**: [Next.js](https://nextjs.org/) (App Router)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
+-   **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/) & [RTK Query](https://redux-toolkit.js.org/rtk-query/)
+-   **Persistence**: [Redux Persist](https://github.com/rt2zz/redux-persist)
+-   **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+-   **Database ORM**: [Prisma](https://www.prisma.io/)
+-   **Animations**: [Framer Motion](https://www.framer.com/motion/)
+-   **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
+-   **Internationalization**: [i18next](https://www.i18next.com/)
+-   **Icons**: [Lucide React](https://lucide.dev/)
+-   **Form Handling**: [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
+
+## API Endpoints
+
+The application uses its own backend API routes to securely interact with external services.
+
+| Endpoint          | Method | Description                                     | Query Parameters                                                                |
+| ----------------- | ------ | ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| `/api/news`       | `GET`  | Fetches news articles.                          | `q`, `category`, `country`, `pageSize`, `page`                                  |
+| `/api/movies`     | `GET`  | Fetches movies.                                 | `q`, `genre`, `page`                                                            |
+| `/api/social`     | `GET`  | Fetches mock social media posts.                | `hashtag`                                                                       |
+| `/api/search`     | `GET`  | Searches across all content types.              | `q`, `type`                                                                     |
+| `/api/user`       | `GET`  | Retrieves the current authenticated user's data.| -                                                                               |
+| `/api/user`       | `PATCH`| Updates the current user's preferences.         | -                                                                               |
+| `/api/auth/*`     | -      | Handles all authentication-related logic.       | (Handled by NextAuth.js)                                                        |
 
 ## Project Structure
 
+The codebase is organized into the following key directories:
+
 ```
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   ├── favorites/         # Favorites page
-│   ├── trending/          # Trending page
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── cards/            # Content cards
-│   ├── dialogs/          # Modal dialogs
-│   ├── feed/             # Feed components
-│   ├── layout/           # Layout components
-│   ├── sections/         # Page sections
-│   ├── skeletons/        # Loading skeletons
-│   └── ui/               # shadcn/ui components
-├── store/                # Redux store
-│   ├── slices/           # Redux slices
-│   └── api.ts            # RTK Query API
-└── lib/                  # Utilities
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-MIT License - see LICENSE file for details
+├── app/                  # Next.js App Router: Pages and API routes
+│   ├── api/              # Backend API endpoints
+│   ├── auth/             # Authentication pages (login, register)
+│   ├── (main)/           # Main dashboard pages (home, news, movies, etc.)
+│   └── layout.tsx        # Root layout
+├── components/           # Reusable React components
+│   ├── cards/            # Content display cards
+│   ├── dialogs/          # Modal dialogs (search, welcome)
+│   ├── layout/           # Core layout components (header, sidebar)
+│   └── ui/               # UI primitives from shadcn/ui
+├── lib/                  # Helper functions, constants, and third-party initializations
+├── prisma/               # Prisma schema, migrations, and seed script
+├── store/                # Redux Toolkit setup
+│   ├── slices/           # Redux state slices (user, content, ui)
+│   └── api.ts            # RTK Query API definitions
+└── public/               # Static assets
